@@ -22,27 +22,27 @@ Food::Food(string name,
     this->fat = fat;
 }
 
-string Food::getName()
+string Food::getName() const
 {
     return name;
 }
 
-int Food::getCalories()
+int Food::getCalories() const
 {
     return calories;
 }
 
-int Food::getProtein()
+int Food::getProtein() const
 {
     return protein;
 }
 
-int Food::getCarbs()
+int Food::getCarbs() const
 {
     return carbs;
 }
 
-int Food::getFat()
+int Food::getFat() const
 {
     return fat;
 }

@@ -23,15 +23,15 @@ public:
          int carbs,
          int fat);
 
-    string getName();
+    string getName() const;
 
-    int getCalories();
+    int getCalories() const;
 
-    int getProtein();
+    int getProtein() const;
 
-    int getCarbs();
+    int getCarbs() const;
 
-    int getFat();
+    int getFat() const;
 };
 
 #endif

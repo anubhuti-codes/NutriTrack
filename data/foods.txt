@@ -1,0 +1,20 @@
+Apple,95,1,25,0
+Banana,105,1,27,0
+Egg,78,6,1,5
+Milk,120,8,12,5
+Rice,200,4,45,1
+Chapati,120,3,22,2
+Paneer,265,18,6,20
+Curd,98,11,4,4
+Dal,180,9,27,1
+Poha,180,4,32,3
+Idli,58,2,12,0
+Dosa,133,3,18,4
+Upma,192,5,32,6
+Oats,150,5,27,3
+Bread,80,3,15,1
+Peanut Butter,188,8,6,16
+Chicken Breast,165,31,0,4
+Fish,206,22,0,12
+Orange,62,1,15,0
+Mango,99,1,25,1
