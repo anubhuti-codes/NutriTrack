@@ -11,7 +11,7 @@ private:
     int dailyGoal;
     int totalCalories;
     int totalProtein;
-    int totalCarbs;
+    int totalCarbs; 
     int totalFat;
 
 public:
