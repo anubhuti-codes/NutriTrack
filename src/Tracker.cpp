@@ -16,6 +16,7 @@ Tracker::Tracker()
     totalProtein = 0;
     totalCarbs = 0;
     totalFat = 0;
+    totalCaloriesBurned = 0;
 }
 
 void Tracker::addFood(const Food &food, int quantity)
@@ -197,14 +198,130 @@ void Tracker::addMeal()
     cout << "\nFood Added Successfully.\n";
 }
 
+void Tracker::addExercise()
+{
+    int choice;
+    int duration;
+    int caloriesBurned = 0;
+
+    cout << "\n========== EXERCISE TRACKER ==========\n";
+
+    cout << "1. Walking\n";
+    cout << "2. Running\n";
+    cout << "3. Cycling\n";
+    cout << "4. Skipping\n";
+
+    cout << "\nChoose exercise : ";
+    cin >> choice;
+
+    if(cin.fail())
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid choice.\n";
+        return;
+    }
+
+    cout << "Enter duration in minutes : ";
+    cin >> duration;
+
+    if(cin.fail())
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid duration.\n";
+        return;
+    }
+
+    if(duration <= 0)
+    {
+        cout << "\nDuration must be greater than 0.\n";
+        return;
+    }
+
+    switch(choice)
+    {
+        case 1:
+            caloriesBurned = duration * 4;
+            break;
+
+        case 2:
+            caloriesBurned = duration * 10;
+            break;
+
+        case 3:
+            caloriesBurned = duration * 8;
+            break;
+
+        case 4:
+            caloriesBurned = duration * 12;
+            break;
+
+        default:
+            cout << "\nInvalid exercise choice.\n";
+            return;
+    }
+
+    totalCaloriesBurned += caloriesBurned;
+
+    cout << "\nExercise Added Successfully.\n";
+    cout << "Calories Burned: "
+         << caloriesBurned
+         << " kcal\n";
+}
+
+void Tracker::showExerciseSummary() const
+{
+    cout << "\n========== EXERCISE SUMMARY ==========\n";
+
+    cout << "Total Calories Burned: "
+         << totalCaloriesBurned
+         << " kcal\n";
+}
+
 void Tracker::showReport() const
 {
-    cout<<"\n========== DAILY REPORT ==========\n";
+    cout << "\n========== DAILY REPORT ==========\n";
 
-    cout<<left<<setw(15)<<"Calories"<<totalCalories<<endl;
-    cout<<left<<setw(15)<<"Protein"<<totalProtein<<" g"<<endl;
-    cout<<left<<setw(15)<<"Carbs"<<totalCarbs<<" g"<<endl;
-    cout<<left<<setw(15)<<"Fat"<<totalFat<<" g"<<endl;
+    cout << left << setw(25)
+         << "Calories Consumed"
+         << totalCalories
+         << " kcal"
+         << endl;
+
+    cout << left << setw(25)
+         << "Calories Burned"
+         << totalCaloriesBurned
+         << " kcal"
+         << endl;
+
+    cout << left << setw(25)
+         << "Net Calories"
+         << totalCalories - totalCaloriesBurned
+         << " kcal"
+         << endl;
+
+    cout << "\n---------- NUTRITION ----------\n";
+
+    cout << left << setw(25)
+         << "Protein"
+         << totalProtein
+         << " g"
+         << endl;
+
+    cout << left << setw(25)
+         << "Carbohydrates"
+         << totalCarbs
+         << " g"
+         << endl;
+
+    cout << left << setw(25)
+         << "Fat"
+         << totalFat
+         << " g"
+         << endl;
 }
 
 void Tracker::saveHistory(const string &username) const
@@ -235,8 +352,10 @@ void Tracker::reset()
 {
     meals.clear();
 
-    totalCalories=0;
-    totalProtein=0;
-    totalCarbs=0;
-    totalFat=0;
+    totalCalories = 0;
+    totalProtein = 0;
+    totalCarbs = 0;
+    totalFat = 0;
+
+    totalCaloriesBurned = 0;
 }

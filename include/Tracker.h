@@ -16,6 +16,8 @@ private:
     int totalCarbs;
     int totalFat;
 
+    int totalCaloriesBurned;
+
     std::vector<Food> foodDatabase;
 
 public:
@@ -31,6 +33,10 @@ public:
     Food* findFood(const std::string &input);
 
     void addMeal();
+
+    void addExercise();
+
+    void showExerciseSummary() const;
 
     void showReport() const;
 
