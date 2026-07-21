@@ -22,7 +22,7 @@ public:
 
     Tracker();
 
-    void addFood(const Food &food);
+    void addFood(const Food &food, int quantity = 1);
 
     void loadFoods();
 

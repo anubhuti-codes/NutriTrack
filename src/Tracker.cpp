@@ -17,14 +17,17 @@ Tracker::Tracker()
     totalFat = 0;
 }
 
-void Tracker::addFood(const Food &food)
+void Tracker::addFood(const Food &food, int quantity)
 {
-    meals.push_back(food);
+    for(int i = 0; i < quantity; i++)
+    {
+        meals.push_back(food);
+    }
 
-    totalCalories += food.getCalories();
-    totalProtein += food.getProtein();
-    totalCarbs += food.getCarbs();
-    totalFat += food.getFat();
+    totalCalories += food.getCalories() * quantity;
+    totalProtein += food.getProtein() * quantity;
+    totalCarbs += food.getCarbs() * quantity;
+    totalFat += food.getFat() * quantity;
 }
 
 void Tracker::loadFoods()
@@ -149,7 +152,28 @@ void Tracker::addMeal()
         return;
     }
 
-    addFood(*food);
+    int quantity;
+
+    cout << "Enter quantity : ";
+
+    cin >> quantity;
+
+    if(cin.fail())
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid quantity.\n";
+        return;
+    }
+
+    if(quantity <= 0)
+    {
+        cout << "\nQuantity must be greater than 0.\n";
+        return;
+    }
+
+    addFood(*food, quantity);
 
     cout << "\nFood Added Successfully.\n";
 }
