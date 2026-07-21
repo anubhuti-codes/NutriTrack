@@ -1,2 +1,4 @@
 Anubhuti 12345 20 female 1.55 45 1800
 Test 12 20 female 1.55 55 1500
+Maria 12 20 1.66 1.666 45 1500
+user 12 20 m 1.55 54 2000

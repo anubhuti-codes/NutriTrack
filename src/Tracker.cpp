@@ -204,6 +204,27 @@ void Tracker::addMeal()
     cout << "\nFood Added Successfully.\n";
 }
 
+void Tracker::showMealHistory() const
+{
+    cout << "\n========== TODAY'S MEALS ==========\n";
+
+    if(meals.empty())
+    {
+        cout << "No meals added yet.\n";
+        return;
+    }
+
+    for(size_t i = 0; i < meals.size(); i++)
+    {
+        cout << i + 1 << ". "
+             << meals[i].getName()
+             << " - "
+             << meals[i].getCalories()
+             << " kcal"
+             << endl;
+    }
+}
+
 void Tracker::addExercise()
 {
     int choice;

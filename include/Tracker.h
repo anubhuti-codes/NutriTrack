@@ -34,6 +34,8 @@ public:
 
     void addMeal();
 
+    void showMealHistory() const;
+
     void addExercise();
 
     void showExerciseSummary() const;

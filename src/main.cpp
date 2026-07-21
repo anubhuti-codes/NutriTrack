@@ -28,13 +28,14 @@ int main()
         cout<<"1. Register\n";
         cout<<"2. Login\n";
         cout<<"3. Add Meal\n";
-        cout<<"4. Add Exercise\n";
-        cout<<"5. Daily Report\n";
-        cout<<"6. Save History\n";
-        cout<<"7. View Profile\n";
-        cout<<"8. View Food Database\n";
-        cout<<"9. Exercise Summary\n";
-        cout<<"10. Exit\n";
+        cout<<"4. View Meal History\n";
+        cout<<"5. Add Exercise\n";
+        cout<<"6. Daily Report\n";
+        cout<<"7. Save History\n";
+        cout<<"8. View Profile\n";
+        cout<<"9. View Food Database\n";
+        cout<<"10. Exercise Summary\n";
+        cout<<"11. Exit\n";
 
         cout<<"\nChoice : ";
 
@@ -73,7 +74,7 @@ int main()
         case 4:
 
             if(loggedIn)
-                tracker.addExercise();
+                tracker.showMealHistory();
             else
                 cout<<"\nLogin First.\n";
 
@@ -81,35 +82,44 @@ int main()
 
         case 5:
 
-            tracker.showReport();
+            if(loggedIn)
+                tracker.addExercise();
+            else
+                cout<<"\nLogin First.\n";
 
             break;
 
         case 6:
 
-            tracker.saveHistory(user.getUsername());
+            tracker.showReport();
 
             break;
 
         case 7:
 
-            user.displayProfile();
+            tracker.saveHistory(user.getUsername());
 
             break;
 
         case 8:
 
-            tracker.displayFoods();
+            user.displayProfile();
 
             break;
 
         case 9:
 
-            tracker.showExerciseSummary();
+            tracker.displayFoods();
 
             break;
 
         case 10:
+
+            tracker.showExerciseSummary();
+
+            break;
+
+        case 11:
 
             cout<<"\nThank You.\n";
 
@@ -120,7 +130,7 @@ int main()
             cout<<"\nInvalid Choice\n";
         }
 
-    }while(choice!=10);
+    }while(choice!=11);
 
     return 0;
 }
