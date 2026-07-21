@@ -6,6 +6,7 @@
 #include <sstream>
 #include <limits>
 #include <cctype>
+#include <algorithm>
 
 using namespace std;
 
@@ -113,7 +114,7 @@ Food* Tracker::findFood(const string &input)
     {
         int index = stoi(input);
 
-        if(index >= 1 && index <= foodDatabase.size())
+        if(index >= 1 && index <= static_cast<int>(foodDatabase.size()))
         {
             return &foodDatabase[index - 1];
         }
@@ -121,9 +122,27 @@ Food* Tracker::findFood(const string &input)
         return nullptr;
     }
 
+    string searchInput = input;
+
+    transform(
+        searchInput.begin(),
+        searchInput.end(),
+        searchInput.begin(),
+        ::tolower
+    );
+
     for(auto &food : foodDatabase)
     {
-        if(food.getName() == input)
+        string foodName = food.getName();
+
+        transform(
+            foodName.begin(),
+            foodName.end(),
+            foodName.begin(),
+            ::tolower
+        );
+
+        if(foodName == searchInput)
         {
             return &food;
         }
