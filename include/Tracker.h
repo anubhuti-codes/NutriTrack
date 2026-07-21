@@ -15,14 +15,14 @@ private:
     int totalProtein;
     int totalCarbs;
     int totalFat;
-
     int totalCaloriesBurned;
+    int dailyGoal;
 
     std::vector<Food> foodDatabase;
 
 public:
 
-    Tracker();
+    Tracker(int goal = 2000);
 
     void addFood(const Food &food, int quantity = 1);
 
@@ -39,6 +39,8 @@ public:
     void showExerciseSummary() const;
 
     void showReport() const;
+
+    void setGoal(int goal);
 
     void saveHistory(const std::string &username) const;
 

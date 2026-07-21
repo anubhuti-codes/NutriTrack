@@ -50,7 +50,14 @@ int main()
 
         case 2:
 
-            loggedIn=user.loginUser();
+            loggedIn = user.loginUser();
+
+            if(loggedIn)
+            {
+                tracker.setGoal(user.getGoal());
+
+                cout << "Daily calorie goal loaded successfully.\n";
+            }
 
             break;
 

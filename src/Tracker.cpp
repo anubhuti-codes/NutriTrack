@@ -10,13 +10,19 @@
 
 using namespace std;
 
-Tracker::Tracker()
+Tracker::Tracker(int goal)
 {
     totalCalories = 0;
     totalProtein = 0;
     totalCarbs = 0;
     totalFat = 0;
     totalCaloriesBurned = 0;
+    dailyGoal = goal;
+}
+
+void Tracker::setGoal(int goal)
+{
+    dailyGoal = goal;
 }
 
 void Tracker::addFood(const Food &food, int quantity)
@@ -286,6 +292,12 @@ void Tracker::showReport() const
     cout << "\n========== DAILY REPORT ==========\n";
 
     cout << left << setw(25)
+         << "Daily Goal"
+         << dailyGoal
+         << " kcal"
+         << endl;
+
+    cout << left << setw(25)
          << "Calories Consumed"
          << totalCalories
          << " kcal"
@@ -322,6 +334,27 @@ void Tracker::showReport() const
          << totalFat
          << " g"
          << endl;
+
+    cout << "\n---------- GOAL STATUS ----------\n";
+
+    if(totalCalories < dailyGoal)
+    {
+        cout << "Remaining Calories: "
+             << dailyGoal - totalCalories
+             << " kcal"
+             << endl;
+    }
+    else if(totalCalories == dailyGoal)
+    {
+        cout << "Daily calorie goal reached!\n";
+    }
+    else
+    {
+        cout << "Goal exceeded by: "
+             << totalCalories - dailyGoal
+             << " kcal"
+             << endl;
+    }
 }
 
 void Tracker::saveHistory(const string &username) const
