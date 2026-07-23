@@ -16,8 +16,10 @@ Tracker::Tracker(int goal)
     totalProtein = 0;
     totalCarbs = 0;
     totalFat = 0;
-    totalCaloriesBurned = 0;
     dailyGoal = goal;
+    lastExercise = "";
+    lastExerciseMinutes = 0;
+    lastCaloriesBurned = 0;
 }
 
 void Tracker::setGoal(int goal)
@@ -27,6 +29,9 @@ void Tracker::setGoal(int goal)
 
 void Tracker::addFood(const Food &food, int quantity)
 {
+    if(quantity <= 0)
+        return;
+
     for(int i = 0; i < quantity; i++)
     {
         meals.push_back(food);
@@ -44,7 +49,7 @@ void Tracker::loadFoods()
 
     ifstream file("data/foods.txt");
 
-    if (!file.is_open())
+    if(!file.is_open())
     {
         cout << "Unable to open foods database.\n";
         return;
@@ -52,9 +57,9 @@ void Tracker::loadFoods()
 
     string line;
 
-    while (getline(file, line))
+    while(getline(file, line))
     {
-        if (line.empty())
+        if(line.empty())
             continue;
 
         stringstream ss(line);
@@ -97,7 +102,8 @@ void Tracker::displayFoods() const
     for(size_t i = 0; i < foodDatabase.size(); i++)
     {
         cout << i + 1 << ". "
-             << left << setw(20) << foodDatabase[i].getName()
+             << left << setw(20)
+             << foodDatabase[i].getName()
              << foodDatabase[i].getCalories()
              << " cal"
              << endl;
@@ -110,18 +116,19 @@ Food* Tracker::findFood(const string &input)
 
     for(char c : input)
     {
-        if(!isdigit(c))
+        if(!isdigit(static_cast<unsigned char>(c)))
         {
             isNumber = false;
             break;
         }
     }
 
-    if(isNumber)
+    if(isNumber && !input.empty())
     {
         int index = stoi(input);
 
-        if(index >= 1 && index <= static_cast<int>(foodDatabase.size()))
+        if(index >= 1 &&
+           index <= static_cast<int>(foodDatabase.size()))
         {
             return &foodDatabase[index - 1];
         }
@@ -135,7 +142,10 @@ Food* Tracker::findFood(const string &input)
         searchInput.begin(),
         searchInput.end(),
         searchInput.begin(),
-        ::tolower
+        [](unsigned char c)
+        {
+            return static_cast<char>(tolower(c));
+        }
     );
 
     for(auto &food : foodDatabase)
@@ -146,7 +156,10 @@ Food* Tracker::findFood(const string &input)
             foodName.begin(),
             foodName.end(),
             foodName.begin(),
-            ::tolower
+            [](unsigned char c)
+            {
+                return static_cast<char>(tolower(c));
+            }
         );
 
         if(foodName == searchInput)
@@ -166,7 +179,7 @@ void Tracker::addMeal()
 
     string input;
 
-    cout << "\nEnter food number or name : ";
+    cout << "\nEnter food number or name: ";
 
     getline(cin, input);
 
@@ -180,7 +193,7 @@ void Tracker::addMeal()
 
     int quantity;
 
-    cout << "Enter quantity : ";
+    cout << "Enter quantity: ";
 
     cin >> quantity;
 
@@ -225,11 +238,56 @@ void Tracker::showMealHistory() const
     }
 }
 
+void Tracker::removeMeal()
+{
+    if(meals.empty())
+    {
+        cout << "\nNo meals to remove.\n";
+        return;
+    }
+
+    showMealHistory();
+
+    int choice;
+
+    cout << "\nEnter meal number to remove: ";
+
+    cin >> choice;
+
+    if(cin.fail())
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid input.\n";
+        return;
+    }
+
+    if(choice < 1 ||
+       choice > static_cast<int>(meals.size()))
+    {
+        cout << "\nInvalid meal number.\n";
+        return;
+    }
+
+    Food removedFood = meals[choice - 1];
+
+    totalCalories -= removedFood.getCalories();
+    totalProtein -= removedFood.getProtein();
+    totalCarbs -= removedFood.getCarbs();
+    totalFat -= removedFood.getFat();
+
+    meals.erase(meals.begin() + (choice - 1));
+
+    cout << "\n"
+         << removedFood.getName()
+         << " removed successfully.\n";
+}
+
 void Tracker::addExercise()
 {
     int choice;
     int duration;
-    int caloriesBurned = 0;
 
     cout << "\n========== EXERCISE TRACKER ==========\n";
 
@@ -238,7 +296,8 @@ void Tracker::addExercise()
     cout << "3. Cycling\n";
     cout << "4. Skipping\n";
 
-    cout << "\nChoose exercise : ";
+    cout << "\nChoose exercise: ";
+
     cin >> choice;
 
     if(cin.fail())
@@ -246,14 +305,21 @@ void Tracker::addExercise()
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        cout << "\nInvalid choice.\n";
+        cout << "\nInvalid input.\n";
         return;
     }
 
-    cout << "Enter duration in minutes : ";
+    if(choice < 1 || choice > 4)
+    {
+        cout << "\nInvalid exercise choice.\n";
+        return;
+    }
+
+    cout << "Enter duration in minutes: ";
+
     cin >> duration;
 
-    if(cin.fail())
+    if(cin.fail() || duration <= 0)
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -262,50 +328,147 @@ void Tracker::addExercise()
         return;
     }
 
-    if(duration <= 0)
-    {
-        cout << "\nDuration must be greater than 0.\n";
-        return;
-    }
+    int caloriesBurned = 0;
+    string exerciseName;
 
     switch(choice)
     {
         case 1:
+            exerciseName = "Walking";
             caloriesBurned = duration * 4;
             break;
 
         case 2:
+            exerciseName = "Running";
             caloriesBurned = duration * 10;
             break;
 
         case 3:
+            exerciseName = "Cycling";
             caloriesBurned = duration * 8;
             break;
 
         case 4:
+            exerciseName = "Skipping";
             caloriesBurned = duration * 12;
             break;
-
-        default:
-            cout << "\nInvalid exercise choice.\n";
-            return;
     }
 
-    totalCaloriesBurned += caloriesBurned;
+    lastExercise = exerciseName;
+    lastExerciseMinutes = duration;
+    lastCaloriesBurned = caloriesBurned;
+
+    ofstream file("data/exercise.txt", ios::app);
+
+    if(file.is_open())
+    {
+        file << exerciseName << ","
+             << duration << ","
+             << caloriesBurned
+             << endl;
+
+        file.close();
+    }
 
     cout << "\nExercise Added Successfully.\n";
+
+    cout << "Exercise: "
+         << exerciseName
+         << endl;
+
+    cout << "Duration: "
+         << duration
+         << " minutes"
+         << endl;
+
     cout << "Calories Burned: "
          << caloriesBurned
-         << " kcal\n";
+         << " kcal"
+         << endl;
 }
 
 void Tracker::showExerciseSummary() const
 {
     cout << "\n========== EXERCISE SUMMARY ==========\n";
 
-    cout << "Total Calories Burned: "
-         << totalCaloriesBurned
-         << " kcal\n";
+    if(lastExercise.empty())
+    {
+        cout << "No exercise recorded in this session.\n";
+        return;
+    }
+
+    cout << "Exercise: "
+         << lastExercise
+         << endl;
+
+    cout << "Duration: "
+         << lastExerciseMinutes
+         << " minutes"
+         << endl;
+
+    cout << "Calories Burned: "
+         << lastCaloriesBurned
+         << " kcal"
+         << endl;
+}
+
+void Tracker::calculateBMI()
+{
+    float weight;
+    float height;
+
+    cout << "\n========== BMI CALCULATOR ==========\n";
+
+    cout << "Enter weight (kg): ";
+
+    cin >> weight;
+
+    if(cin.fail() || weight <= 0)
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid weight.\n";
+        return;
+    }
+
+    cout << "Enter height (meters): ";
+
+    cin >> height;
+
+    if(cin.fail() || height <= 0)
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\nInvalid height.\n";
+        return;
+    }
+
+    float bmi = weight / (height * height);
+
+    cout << fixed << setprecision(2);
+
+    cout << "\nYour BMI: "
+         << bmi
+         << endl;
+
+    if(bmi < 18.5)
+    {
+        cout << "Category: Underweight\n";
+    }
+    else if(bmi < 25)
+    {
+        cout << "Category: Normal Weight\n";
+    }
+    else if(bmi < 30)
+    {
+        cout << "Category: Overweight\n";
+    }
+    else
+    {
+        cout << "Category: Obese\n";
+    }
 }
 
 void Tracker::showReport() const
@@ -313,92 +476,150 @@ void Tracker::showReport() const
     cout << "\n========== DAILY REPORT ==========\n";
 
     cout << left << setw(25)
-         << "Daily Goal"
-         << dailyGoal
-         << " kcal"
-         << endl;
-
-    cout << left << setw(25)
-         << "Calories Consumed"
+         << "Calories Consumed:"
          << totalCalories
          << " kcal"
          << endl;
 
     cout << left << setw(25)
-         << "Calories Burned"
-         << totalCaloriesBurned
-         << " kcal"
-         << endl;
-
-    cout << left << setw(25)
-         << "Net Calories"
-         << totalCalories - totalCaloriesBurned
-         << " kcal"
-         << endl;
-
-    cout << "\n---------- NUTRITION ----------\n";
-
-    cout << left << setw(25)
-         << "Protein"
+         << "Protein:"
          << totalProtein
          << " g"
          << endl;
 
     cout << left << setw(25)
-         << "Carbohydrates"
+         << "Carbohydrates:"
          << totalCarbs
          << " g"
          << endl;
 
     cout << left << setw(25)
-         << "Fat"
+         << "Fat:"
          << totalFat
          << " g"
          << endl;
 
-    cout << "\n---------- GOAL STATUS ----------\n";
+    cout << "\n---------- EXERCISE ----------\n";
 
-    if(totalCalories < dailyGoal)
-    {
-        cout << "Remaining Calories: "
-             << dailyGoal - totalCalories
-             << " kcal"
-             << endl;
-    }
-    else if(totalCalories == dailyGoal)
-    {
-        cout << "Daily calorie goal reached!\n";
-    }
-    else
-    {
-        cout << "Goal exceeded by: "
-             << totalCalories - dailyGoal
-             << " kcal"
-             << endl;
-    }
+    cout << left << setw(25)
+         << "Exercise:"
+         << (lastExercise.empty() ? "None" : lastExercise)
+         << endl;
+
+    cout << left << setw(25)
+         << "Calories Burned:"
+         << lastCaloriesBurned
+         << " kcal"
+         << endl;
+
+    cout << "\n---------- SUMMARY ----------\n";
+
+    int netCalories = totalCalories - lastCaloriesBurned;
+
+    cout << left << setw(25)
+         << "Net Calories:"
+         << netCalories
+         << " kcal"
+         << endl;
 }
 
 void Tracker::saveHistory(const string &username) const
 {
-    ofstream file("data/history.txt",ios::app);
+    ofstream file("data/history.txt", ios::app);
 
-    if(file.is_open())
+    if(!file.is_open())
     {
-        file<<"User : "<<username<<endl;
+        cout << "\nUnable to save history.\n";
+        return;
+    }
 
-        file<<"Calories : "<<totalCalories<<endl;
+    int netCalories = totalCalories - lastCaloriesBurned;
 
-        file<<"Protein : "<<totalProtein<<endl;
+    file << "\n====================================\n";
+    file << "NUTRITION SESSION\n";
+    file << "====================================\n";
 
-        file<<"Carbs : "<<totalCarbs<<endl;
+    file << "User: "
+         << username
+         << endl;
 
-        file<<"Fat : "<<totalFat<<endl;
+    file << "Calories Consumed: "
+         << totalCalories
+         << " kcal"
+         << endl;
 
-        file<<"-------------------------"<<endl;
+    file << "Protein: "
+         << totalProtein
+         << " g"
+         << endl;
 
-        file.close();
+    file << "Carbohydrates: "
+         << totalCarbs
+         << " g"
+         << endl;
 
-        cout<<"\nHistory Saved.\n";
+    file << "Fat: "
+         << totalFat
+         << " g"
+         << endl;
+
+    file << "Exercise: "
+         << (lastExercise.empty() ? "None" : lastExercise)
+         << endl;
+
+    file << "Exercise Duration: "
+         << lastExerciseMinutes
+         << " minutes"
+         << endl;
+
+    file << "Calories Burned: "
+         << lastCaloriesBurned
+         << " kcal"
+         << endl;
+
+    file << "Net Calories: "
+         << netCalories
+         << " kcal"
+         << endl;
+
+    file << "====================================\n";
+
+    file.close();
+
+    cout << "\nHistory Saved Successfully.\n";
+}
+
+void Tracker::viewHistory() const
+{
+    ifstream file("data/history.txt");
+
+    if(!file.is_open())
+    {
+        cout << "\nNo history found.\n";
+        return;
+    }
+
+    cout << "\n========== NUTRITION HISTORY ==========\n";
+
+    string line;
+
+    bool hasHistory = false;
+
+    while(getline(file, line))
+    {
+        cout << line << endl;
+
+        if(!line.empty())
+        {
+            hasHistory = true;
+        }
+    }
+
+    file.close();
+
+    if(!hasHistory)
+    {
+        cout << "\nNo saved history available.\n";
     }
 }
 
@@ -411,5 +632,7 @@ void Tracker::reset()
     totalCarbs = 0;
     totalFat = 0;
 
-    totalCaloriesBurned = 0;
+    lastExercise = "";
+    lastExerciseMinutes = 0;
+    lastCaloriesBurned = 0;
 }

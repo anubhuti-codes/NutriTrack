@@ -1,5 +1,11 @@
 #include "../include/User.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
 User::User()
 {
     username = "";

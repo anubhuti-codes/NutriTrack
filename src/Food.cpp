@@ -9,7 +9,7 @@ Food::Food()
     fat = 0;
 }
 
-Food::Food(string name,
+Food::Food(std::string name,
            int calories,
            int protein,
            int carbs,
@@ -22,7 +22,7 @@ Food::Food(string name,
     this->fat = fat;
 }
 
-string Food::getName() const
+std::string Food::getName() const
 {
     return name;
 }

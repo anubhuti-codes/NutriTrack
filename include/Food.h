@@ -3,12 +3,10 @@
 
 #include <string>
 
-using namespace std;
-
 class Food
 {
 private:
-    string name;
+    std::string name;
     int calories;
     int protein;
     int carbs;
@@ -17,13 +15,13 @@ private:
 public:
     Food();
 
-    Food(string name,
+    Food(std::string name,
          int calories,
          int protein,
          int carbs,
          int fat);
 
-    string getName() const;
+    std::string getName() const;
 
     int getCalories() const;
 

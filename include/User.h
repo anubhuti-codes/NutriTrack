@@ -1,23 +1,19 @@
 #ifndef USER_H
 #define USER_H
 
-#include <iostream>
-#include <fstream>
 #include <string>
-
-using namespace std;
 
 class User
 {
 private:
 
-    string username;
+    std::string username;
 
-    string password;
+    std::string password;
 
     int age;
 
-    string gender;
+    std::string gender;
 
     float height;
 
@@ -37,7 +33,7 @@ public:
 
     void updateProfile();
 
-    string getUsername();
+    std::string getUsername();
 
     int getGoal();
 

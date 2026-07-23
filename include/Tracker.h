@@ -15,10 +15,13 @@ private:
     int totalProtein;
     int totalCarbs;
     int totalFat;
-    int totalCaloriesBurned;
     int dailyGoal;
 
     std::vector<Food> foodDatabase;
+
+    std::string lastExercise;
+    int lastExerciseMinutes;
+    int lastCaloriesBurned;
 
 public:
 
@@ -36,15 +39,21 @@ public:
 
     void showMealHistory() const;
 
+    void removeMeal();
+
     void addExercise();
 
     void showExerciseSummary() const;
+
+    void calculateBMI();
 
     void showReport() const;
 
     void setGoal(int goal);
 
     void saveHistory(const std::string &username) const;
+
+    void viewHistory() const;
 
     void reset();
 
