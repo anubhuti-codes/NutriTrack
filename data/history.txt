@@ -1,14 +1,1 @@
 
-====================================
-NUTRITION SESSION
-====================================
-User: Anubhuti
-Calories Consumed: 265 kcal
-Protein: 18 g
-Carbohydrates: 6 g
-Fat: 20 g
-Exercise: Walking
-Exercise Duration: 30 minutes
-Calories Burned: 120 kcal
-Net Calories: 145 kcal
-====================================
